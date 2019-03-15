@@ -58,11 +58,16 @@ class helper {
 
         $paramsql = array('userid' => $userid);
         $records = $DB->get_records('block_recentlyaccesseditems', $paramsql, $sort);
+
         $order = 0;
+
+        $visiblecourses = get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.id");
 
         // Get array of items by course. Use $order index to keep sql sorted results.
         foreach ($records as $record) {
-            $courses[$record->courseid][$order++] = $record;
+            if(array_key_exists($record->courseid, $visiblecourses)) {
+                $courses[$record->courseid][$order++] = $record;
+            }
         }
 
         // Group by courses to reduce get_fast_modinfo requests.
